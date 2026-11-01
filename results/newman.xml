@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Orders API" tests="3" time="0.066">
+  <testsuite name="Login" id="87c17123-7eaf-4f05-bca0-c884134c770d" timestamp="2026-11-01T19:55:50.112Z" tests="1" failures="0" errors="0" time="0.052">
+    <testcase name="статус 200" time="0.052" classname="Login"/>
+  </testsuite>
+  <testsuite name="Create order" id="95693f27-cd60-4dd8-aecb-0d1d5d95df5d" timestamp="2026-11-01T19:55:50.112Z" tests="2" failures="0" errors="0" time="0.007">
+    <testcase name="статус 201" time="0.007" classname="CreateOrder"/>
+    <testcase name="сума з доставкою" time="0.007" classname="CreateOrder"/>
+  </testsuite>
+  <testsuite name="Get order" id="deaa083e-6000-4968-b322-30e8c49dbf46" timestamp="2026-11-01T19:55:50.112Z" tests="0" failures="0" errors="0" time="0.007"/>
+</testsuites>
