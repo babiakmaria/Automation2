@@ -18,6 +18,14 @@ const round2 = (n: number) => Math.round(n * 100) / 100;
 function toPublic({ ownerId, ...rest }: Order) {
   return rest;
 }
+
+// undefined — параметр не передано; null — некоректне значення
+function parseBound(raw: unknown): number | undefined | null {
+  if (raw === undefined) return undefined;
+  if (typeof raw !== 'string' || raw.trim() === '') return null;
+  const n = Number(raw);
+  return Number.isFinite(n) && n >= 0 ? n : null;
+}
  
 export function createApp() {
   const app = express();
@@ -69,8 +77,19 @@ export function createApp() {
     res.status(201).location(`/orders/${order.id}`).json(toPublic(order));
   });
  
-  app.get('/orders', (_req, res) => {
-    const mine = [...orders.values()].filter((o) => o.ownerId === res.locals.user.id);
+  app.get('/orders', (req, res) => {
+    const min = parseBound(req.query.minTotal);
+    const max = parseBound(req.query.maxTotal);
+    if (min === null || max === null) {
+      return res.status(400).json({ code: 'INVALID_TOTAL_FILTER' });
+    }
+    if (min !== undefined && max !== undefined && min > max) {
+      return res.status(400).json({ code: 'INVALID_TOTAL_RANGE' });
+    }
+    const mine = [...orders.values()].filter((o) =>
+      o.ownerId === res.locals.user.id
+      && (min === undefined || o.total >= min)
+      && (max === undefined || o.total <= max));
     res.json(mine.map(toPublic));
   });
  

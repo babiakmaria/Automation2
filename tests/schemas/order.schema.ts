@@ -19,3 +19,15 @@ export const orderSchema = {
   required: ['id', 'tier', 'subtotal', 'total', 'createdAt', 'items'],
   additionalProperties: false,
 } as const;
+
+export const orderListSchema = {
+  type: 'array',
+  items: orderSchema,
+} as const;
+
+export const errorSchema = {
+  type: 'object',
+  properties: { code: { type: 'string', minLength: 1 } },
+  required: ['code'],
+  additionalProperties: false,
+} as const;

@@ -38,12 +38,9 @@
           "script": {
             "exec": [
               "pm.test('статус 200', () => pm.response.to.have.status(200));",
-              "pm.collectionVariables.set('token', pm.response.json().accessToken);",
-              ""
+              "pm.collectionVariables.set('token', pm.response.json().accessToken);"
             ],
-            "type": "text/javascript",
-            "packages": {},
-            "requests": {}
+            "type": "text/javascript"
           }
         }
       ]
@@ -129,6 +126,106 @@
         }
       },
       "response": []
+    },
+    {
+      "name": "Filter orders",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('статус 200', () => pm.response.to.have.status(200));",
+              "pm.test('усі суми в діапазоні', () => {",
+              "  pm.response.json().forEach(o => pm.expect(o.total).to.be.within(200, 1000));",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/orders?minTotal=200&maxTotal=1000",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "orders"
+          ],
+          "query": [
+            {
+              "key": "minTotal",
+              "value": "200"
+            },
+            {
+              "key": "maxTotal",
+              "value": "1000"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Filter orders invalid range",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/orders?minTotal=1000&maxTotal=100",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "orders"
+          ],
+          "query": [
+            {
+              "key": "minTotal",
+              "value": "1000"
+            },
+            {
+              "key": "maxTotal",
+              "value": "100"
+            }
+          ]
+        }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('статус 400', () => pm.response.to.have.status(400));",
+              "pm.test('код помилки', () => pm.expect(pm.response.json().code).to.eql('INVALID_TOTAL_RANGE'));"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
     }
   ],
   "event": [
